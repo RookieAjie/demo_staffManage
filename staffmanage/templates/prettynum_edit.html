@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    prettynum_edit
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"> 编辑靓号 </h3>
+            </div>
+            <div class="panel-body">
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label>{{ field.label }}</label>
+                            {{ field }}
+                        <span style="color: red">{{ field.errors }}</span>
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                        提 交
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

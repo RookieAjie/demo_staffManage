@@ -1,0 +1,173 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    task_list
+{% endblock %}
+
+{% block style %}
+    <style>
+        .status-available {
+            background-color: lightpink;
+            color: red;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">表单</div>
+            <div class="panel-body">
+
+                <form id="formAdd">
+                    <div class="clearfix">
+                        {% for item in form %}
+                            <div class="col-xs-6">
+                                <div class="form-group" style="position: relative;margin-bottom: 20px">
+                                    <label>{{ item.label }}</label>
+                                    {{ item }}
+                                    <span class="error_msg" style="position: absolute;color: red"></span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="col-xs-12">
+                            <input type="button" id="btnAdd" class="btn btn-primary" value="提 交">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                任务列表
+            </div>
+
+            <!-- Table -->
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>级别</th>
+                    <th>标题</th>
+                    <th>负责人</th>
+                    <th style="width: 30%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in queryset %}
+                    <tr {% if item.level == 1 %}class="status-available"{% endif %}>
+                        <th>{{ item.id }}</th>
+                        <td>{{ item.get_level_display }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.manager.username }}</td>
+                        <td>
+                            <a href="#" class="btn btn-info btn-xs">编辑</a>
+                            <a href="#" class="btn btn-danger btn-xs">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <ul class="pagination">
+            {{ page_string }}
+        </ul>
+
+        {#        <hr>#}
+        {#        <div>#}
+        {#            <h1>Ajax学习</h1>#}
+        {#            <h3>示例1</h3>#}
+        {#            <input id="btn1" type="button" class="btn btn-primary" value="点击">#}
+        {#            <h3>示例2</h3>#}
+        {#            <input type="text" id="txtUser" placeholder="姓名">#}
+        {#            <input type="text" id="txtAge" placeholder="年龄">#}
+        {#            <input type="button" id=#}
+        {#                    "btn2" class="btn btn-primary" value="点击">#}
+        {#        </div>#}
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            // 页面框架加载完成后代码自动执行
+            bindBtn1Event();
+            bindBtn2Event();
+
+            bindBtnAddEvent();
+        })
+
+        function bindBtn1Event() {
+            $('#btn1').click(function () {
+                $.ajax({
+                    url: '/task/ajax/',
+                    type: 'post',
+                    data: {
+                        n1: 123,
+                        n2: 456
+                    },
+                    dataType: 'JSON',
+                    success: function (res) {
+                        console.log(res)
+                        console.log(res.status)
+                        console.log(res.data)
+                    }
+                })
+            })
+        }
+
+        function bindBtn2Event() {
+            $('#btn2').click(function () {
+                $.ajax({
+                    url: '/task/ajax/',
+                    type: 'post',
+                    data: {
+                        name: $('#txtUser').val(),
+                        age: $('#txtAge').val()
+                    },
+                    dataType: 'JSON',
+                    success: function (res) {
+                        console.log(res)
+                        console.log(res.status)
+                        console.log(res.data)
+                    }
+                })
+            })
+        }
+
+        function bindBtnAddEvent() {
+            $('#btnAdd').click(function () {
+
+                $('.error_msg').empty();
+
+                $.ajax({
+                    url: '/task/add/',
+                    type: 'post',
+                    data: $('#formAdd').serialize(),
+                    dataType: 'JSON',
+                    success: function (res) {
+                        if (res.status) {
+                            alert('添加成功!')
+                            // 用 JS 实现页面刷新
+                            location.reload()
+                        } else {
+                            $.each(res.error, function (name, data) {
+                                $('#id_' + name).next().text(data[0])
+                            })
+
+                        }
+                    }
+                })
+            })
+        }
+
+    </script>
+{% endblock %}
