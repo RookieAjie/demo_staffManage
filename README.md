@@ -1,1 +1,1 @@
-这是基于Python Django框架的学习demo。
+这是基于Python Django框架的运营商员工管理系统。
